@@ -1,4 +1,4 @@
-package com.randomstuff.lists.model;
+package com.randomstuff.lists.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.randomstuff.lists.enums.Status;

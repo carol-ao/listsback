@@ -1,4 +1,4 @@
-package com.randomstuff.lists.model;
+package com.randomstuff.lists.entities;
 
 import jakarta.persistence.*;
 import java.util.HashSet;

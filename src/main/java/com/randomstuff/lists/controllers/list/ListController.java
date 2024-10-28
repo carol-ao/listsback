@@ -1,6 +1,6 @@
-package com.randomstuff.lists.controller.list;
+package com.randomstuff.lists.controllers.list;
 
-import com.randomstuff.lists.model.Lista;
+import com.randomstuff.lists.entities.Lista;
 import com.randomstuff.lists.repositories.ListaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
