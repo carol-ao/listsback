@@ -2,6 +2,7 @@ package com.randomstuff.lists.controllers.list;
 
 import com.randomstuff.lists.entities.Lista;
 import com.randomstuff.lists.repositories.ListaRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,12 +15,11 @@ import java.util.Collections;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/list")
 public class ListController {
 
-    @Autowired
-    ListaRepository listaRepository;
-
+    private final ListaRepository listaRepository;
 
     @PostMapping("/shuffle")
     @CrossOrigin(origins = "http://localhost:5500")

@@ -1,47 +1,35 @@
 package com.randomstuff.lists.controllers.user;
 
 import com.randomstuff.lists.dtos.UserDto;
-import com.randomstuff.lists.entities.Role;
-import com.randomstuff.lists.entities.User;
-import com.randomstuff.lists.repositories.RoleRepository;
-import com.randomstuff.lists.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.randomstuff.lists.exceptions.ResourceNotFoundException;
+import com.randomstuff.lists.services.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    RoleRepository roleRepository;
-
-    @PostMapping("/operator")
-    ResponseEntity<User> createOperatorUser(@RequestBody UserDto userDto){
-        User user = new User(userDto);
-
-        Role role = roleRepository.findById(2L).get();
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        user.setRoles(roles);
-        return ResponseEntity.ok(userRepository.save(user));
-    }
+    private final UserService userService;
 
     @GetMapping
     ResponseEntity<List<UserDto>> findAll(){
-        List<UserDto> users = userRepository.findAll().stream().map(UserDto::new).toList();
+        List<UserDto> users = userService.findAll();
         return new ResponseEntity(users,HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    ResponseEntity<UserDto> findById(@PathVariable(required = true, name = "id") Long id) throws ResourceNotFoundException {
+        UserDto userDto = userService.findById(id);
+        return new ResponseEntity(userDto,HttpStatus.OK);
     }
 }

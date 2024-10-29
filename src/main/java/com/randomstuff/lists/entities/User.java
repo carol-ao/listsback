@@ -1,13 +1,12 @@
 package com.randomstuff.lists.entities;
 
-import com.randomstuff.lists.dtos.UserDto;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 @Entity
 @Table(name="tb_user")
@@ -28,13 +27,6 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "tb_user_role",joinColumns = @JoinColumn(name="user_id"),inverseJoinColumns = @JoinColumn(name="role_id"))
     private Set<Role> roles = new HashSet<>();
-
-    public User(UserDto userDto){
-        name = userDto.getName();
-        email = userDto.getEmail();
-        password = userDto.getPassword();
-        roles = userDto.getRoles().stream().map(Role::new).collect(Collectors.toSet());
-    }
 
     @Override
     public boolean equals(Object o) {

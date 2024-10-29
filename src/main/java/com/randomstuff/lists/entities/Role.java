@@ -20,11 +20,6 @@ public class Role {
     private Long id;
     private String authority;
 
-    public Role(RoleDto roleDto){
-        id = roleDto.getId();
-        authority = roleDto.getAuthority();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
