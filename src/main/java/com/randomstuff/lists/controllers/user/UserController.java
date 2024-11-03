@@ -1,9 +1,11 @@
 package com.randomstuff.lists.controllers.user;
 
 import com.randomstuff.lists.dtos.UserDto;
-import com.randomstuff.lists.dtos.UserInsertOrUpdateDto;
+import com.randomstuff.lists.dtos.UserInsertDto;
+import com.randomstuff.lists.dtos.UserUpdateDto;
 import com.randomstuff.lists.exceptions.ResourceNotFoundException;
 import com.randomstuff.lists.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,15 +34,15 @@ public class UserController {
     }
 
     @PostMapping
-    ResponseEntity<UserInsertOrUpdateDto> insert(@RequestBody UserInsertOrUpdateDto userInsertOrUpdateDto) throws ResourceNotFoundException {
-        userInsertOrUpdateDto = userService.insert(userInsertOrUpdateDto);
-        return new ResponseEntity<>(userInsertOrUpdateDto, HttpStatus.CREATED);
+    ResponseEntity<UserInsertDto> insert(@Valid @RequestBody UserInsertDto userInsertDto) throws ResourceNotFoundException {
+        userInsertDto = userService.insert(userInsertDto);
+        return new ResponseEntity<>(userInsertDto, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{id}")
-    ResponseEntity<UserInsertOrUpdateDto> patch(@RequestBody UserInsertOrUpdateDto userInsertOrUpdateDto,@PathVariable Long id) throws ResourceNotFoundException {
-        userInsertOrUpdateDto = userService.patch(userInsertOrUpdateDto, id);
-        return new ResponseEntity<>(userInsertOrUpdateDto, HttpStatus.OK);
+    @PatchMapping
+    ResponseEntity<UserUpdateDto> patch(@Valid @RequestBody UserUpdateDto userUpdateDto) throws ResourceNotFoundException {
+        userUpdateDto = userService.patch(userUpdateDto);
+        return new ResponseEntity<>(userUpdateDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
