@@ -1,14 +1,12 @@
 package com.randomstuff.lists.dtos;
 
-import com.randomstuff.lists.services.validation.UserInsertValid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
 import java.util.Set;
 
-@UserInsertValid
-public record UserInsertDto(
+public record UserInsertOrUpdateDto(
         Long id,
         @NotBlank(message = "Um usuário precisa de um nome.")
         String name,

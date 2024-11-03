@@ -1,8 +1,8 @@
 package com.randomstuff.lists.controllers.user;
 
 import com.randomstuff.lists.dtos.UserDto;
-import com.randomstuff.lists.dtos.UserInsertDto;
-import com.randomstuff.lists.dtos.UserUpdateDto;
+import com.randomstuff.lists.dtos.UserInsertOrUpdateDto;
+import com.randomstuff.lists.exceptions.EmailAlreadyRegisteredException;
 import com.randomstuff.lists.exceptions.ResourceNotFoundException;
 import com.randomstuff.lists.services.UserService;
 import jakarta.validation.Valid;
@@ -34,15 +34,15 @@ public class UserController {
     }
 
     @PostMapping
-    ResponseEntity<UserInsertDto> insert(@Valid @RequestBody UserInsertDto userInsertDto) throws ResourceNotFoundException {
-        userInsertDto = userService.insert(userInsertDto);
-        return new ResponseEntity<>(userInsertDto, HttpStatus.CREATED);
+    ResponseEntity<UserInsertOrUpdateDto> insert(@Valid @RequestBody UserInsertOrUpdateDto userInsertOrUpdateDto) throws ResourceNotFoundException, EmailAlreadyRegisteredException {
+        userInsertOrUpdateDto = userService.insert(userInsertOrUpdateDto);
+        return new ResponseEntity<>(userInsertOrUpdateDto, HttpStatus.CREATED);
     }
 
     @PatchMapping
-    ResponseEntity<UserUpdateDto> patch(@Valid @RequestBody UserUpdateDto userUpdateDto) throws ResourceNotFoundException {
-        userUpdateDto = userService.patch(userUpdateDto);
-        return new ResponseEntity<>(userUpdateDto, HttpStatus.OK);
+    ResponseEntity<UserInsertOrUpdateDto> patch(@Valid @RequestBody UserInsertOrUpdateDto userInsertOrUpdateDto) throws ResourceNotFoundException, EmailAlreadyRegisteredException {
+        userInsertOrUpdateDto = userService.patch(userInsertOrUpdateDto);
+        return new ResponseEntity<>(userInsertOrUpdateDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
