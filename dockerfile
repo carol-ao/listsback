@@ -4,7 +4,7 @@ FROM maven:3.9.9-amazoncorretto-21 AS build
 # Determina a pasta atual de trabalho: /app
 WORKDIR /app
 # Copia todos os arquivos que estão na pasta um nível acima (..) para a pasta atual da imagem (. -> workdir -> /app)
-COPY .. .
+COPY . .
 
 #RUN mvn test -Dspring.profiles.active=test
 RUN mvn clean package -DskipTests
