@@ -2,7 +2,7 @@ services:
   backend:
     build:
       context: ./
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
     image: spinnerz/carol-lists-backend
     container_name: lists-be
     ports:
