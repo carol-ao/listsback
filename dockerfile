@@ -1,4 +1,8 @@
-# Diz de qual imagem tudo vai partir. Nomeia essa imagem como 'build'
+# This is a multi-stage Dockerfile
+
+# Image with the required files to build and test the application.
+# It will be used to build the final image and will be discarded after that.
+# referenced in this file as 'build'
 FROM maven:3.9.9-amazoncorretto-21 AS build
 
 # Determina a pasta atual de trabalho: /app
@@ -9,12 +13,13 @@ COPY . .
 #RUN mvn test -Dspring.profiles.active=test
 RUN mvn clean package -DskipTests
 
-# Outra imagem, essa se tornará um contêiner
+# Another image, this one will be the final one, smaller, with only the necessary files
 FROM eclipse-temurin:21
 
 # Determina a pasta atual de trabalho: /app
 WORKDIR /app
-# Copia da imagem chamada 'build', tudos os arquivos que estiverem em /app/target/ que terminem com .jar para a pasta atual da imagem
+# Copy the JAR file from the build image all files in /app/target/ that ends with '.jar' to the current folder (WORKDIR)
+# and rename it to app.jar
 COPY --from=build /app/target/*.jar app.jar
 # Deixa essa porta do contêiner acessível
 EXPOSE 8080
