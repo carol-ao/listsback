@@ -14,10 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,7 +36,7 @@ public class UserService {
                         role.getAuthority())).collect(Collectors.toSet()))).toList();
     }
 
-    public  UserDto findById(Long id) throws ResourceNotFoundException {
+    public  UserDto findById(Long id) {
         User user =  userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("id not found"));
         return new UserDto(
                 user.getId(),
@@ -49,13 +46,13 @@ public class UserService {
     }
 
     @Transactional
-    public UserInsertOrUpdateDto insert(UserInsertOrUpdateDto userInsertOrUpdateDto) throws ResourceNotFoundException, EmailAlreadyRegisteredException {
+    public UserInsertOrUpdateDto insert(UserInsertOrUpdateDto userInsertOrUpdateDto) {
 
-        User user = userRepository.findByEmail(userInsertOrUpdateDto.email());
-        if(user != null){
+        if(userRepository.findByEmail(userInsertOrUpdateDto.email()).isPresent()){
             throw new EmailAlreadyRegisteredException("Esse e-mail já está cadastrado para outro usuário.");
         }
-        user = User.builder().
+
+        User user = User.builder().
                 name(userInsertOrUpdateDto.name()).
                 email(userInsertOrUpdateDto.email()).
                 password(passwordEncoder.encode(userInsertOrUpdateDto.password())).
@@ -75,19 +72,22 @@ public class UserService {
     }
 
     @Transactional
-    public UserInsertOrUpdateDto patch(UserInsertOrUpdateDto userInsertOrUpdateDto) throws ResourceNotFoundException, EmailAlreadyRegisteredException {
+    public UserInsertOrUpdateDto patch(UserInsertOrUpdateDto userInsertOrUpdateDto) {
 
-        User user = userRepository.findByEmail(userInsertOrUpdateDto.email());
-        if(user != null && !Objects.equals(user.getId(), userInsertOrUpdateDto.id())){
-            throw new EmailAlreadyRegisteredException("Esse e-mail já está cadastrado para outro usuário.");
+        User user = userRepository.findById(userInsertOrUpdateDto.id())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado para atualizar."));
+
+        if(userRepository.findByEmail(userInsertOrUpdateDto.email()).isPresent() ){
+            User existingUser = userRepository.findByEmail(userInsertOrUpdateDto.email()).get();
+            if(!Objects.equals(existingUser.getId(), userInsertOrUpdateDto.id())){
+                throw new EmailAlreadyRegisteredException("Esse e-mail já está cadastrado para outro usuário.");
+            }
         }
 
-        user = User.builder().
-                id(userInsertOrUpdateDto.id()).
-                name(userInsertOrUpdateDto.name()).
-                email(userInsertOrUpdateDto.email()).
-                password(passwordEncoder.encode(userInsertOrUpdateDto.password())).
-                build();
+        user.setName(userInsertOrUpdateDto.name());
+        user.setEmail(userInsertOrUpdateDto.email());
+        user.setPassword(passwordEncoder.encode(userInsertOrUpdateDto.password()));
+
         Set<Role> roles = new HashSet<>();
         for(RoleDto roleDto : userInsertOrUpdateDto.roleDtoSet()){
             roles.add(roleRepository.findById(roleDto.id()).orElseThrow(() -> new ResourceNotFoundException("Role id "+roleDto.id()+" not found.")));
@@ -103,7 +103,7 @@ public class UserService {
     }
 
     @Transactional
-    public void delete(Long id) throws ResourceNotFoundException {
+    public void delete(Long id) {
         User user = userRepository.findById(id).orElseThrow( () -> new ResourceNotFoundException("User of id "+" was not found."));
         userRepository.delete(user);
     }

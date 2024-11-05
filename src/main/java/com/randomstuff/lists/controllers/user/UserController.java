@@ -28,19 +28,19 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<UserDto> findById(@PathVariable(required = true, name = "id") Long id) throws ResourceNotFoundException {
+    ResponseEntity<UserDto> findById(@PathVariable(required = true, name = "id") Long id) {
         UserDto userDto = userService.findById(id);
         return new ResponseEntity<>(userDto,HttpStatus.OK);
     }
 
     @PostMapping
-    ResponseEntity<UserInsertOrUpdateDto> insert(@Valid @RequestBody UserInsertOrUpdateDto userInsertOrUpdateDto) throws ResourceNotFoundException, EmailAlreadyRegisteredException {
+    ResponseEntity<UserInsertOrUpdateDto> insert(@Valid @RequestBody UserInsertOrUpdateDto userInsertOrUpdateDto) {
         userInsertOrUpdateDto = userService.insert(userInsertOrUpdateDto);
         return new ResponseEntity<>(userInsertOrUpdateDto, HttpStatus.CREATED);
     }
 
     @PatchMapping
-    ResponseEntity<UserInsertOrUpdateDto> patch(@Valid @RequestBody UserInsertOrUpdateDto userInsertOrUpdateDto) throws ResourceNotFoundException, EmailAlreadyRegisteredException {
+    ResponseEntity<UserInsertOrUpdateDto> patch(@Valid @RequestBody UserInsertOrUpdateDto userInsertOrUpdateDto)  {
         userInsertOrUpdateDto = userService.patch(userInsertOrUpdateDto);
         return new ResponseEntity<>(userInsertOrUpdateDto, HttpStatus.OK);
     }
