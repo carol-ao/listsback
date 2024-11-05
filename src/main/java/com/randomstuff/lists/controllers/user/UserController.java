@@ -2,8 +2,10 @@ package com.randomstuff.lists.controllers.user;
 
 import com.randomstuff.lists.dtos.UserDto;
 import com.randomstuff.lists.dtos.UserInsertOrUpdateDto;
+import com.randomstuff.lists.exceptions.EmailAlreadyRegisteredException;
 import com.randomstuff.lists.exceptions.ResourceNotFoundException;
 import com.randomstuff.lists.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,20 +28,20 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<UserDto> findById(@PathVariable(required = true, name = "id") Long id) throws ResourceNotFoundException {
+    ResponseEntity<UserDto> findById(@PathVariable(required = true, name = "id") Long id) {
         UserDto userDto = userService.findById(id);
         return new ResponseEntity<>(userDto,HttpStatus.OK);
     }
 
     @PostMapping
-    ResponseEntity<UserInsertOrUpdateDto> insert(@RequestBody UserInsertOrUpdateDto userInsertOrUpdateDto) throws ResourceNotFoundException {
+    ResponseEntity<UserInsertOrUpdateDto> insert(@Valid @RequestBody UserInsertOrUpdateDto userInsertOrUpdateDto) {
         userInsertOrUpdateDto = userService.insert(userInsertOrUpdateDto);
         return new ResponseEntity<>(userInsertOrUpdateDto, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{id}")
-    ResponseEntity<UserInsertOrUpdateDto> patch(@RequestBody UserInsertOrUpdateDto userInsertOrUpdateDto,@PathVariable Long id) throws ResourceNotFoundException {
-        userInsertOrUpdateDto = userService.patch(userInsertOrUpdateDto, id);
+    @PatchMapping
+    ResponseEntity<UserInsertOrUpdateDto> patch(@Valid @RequestBody UserInsertOrUpdateDto userInsertOrUpdateDto)  {
+        userInsertOrUpdateDto = userService.patch(userInsertOrUpdateDto);
         return new ResponseEntity<>(userInsertOrUpdateDto, HttpStatus.OK);
     }
 
