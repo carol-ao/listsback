@@ -35,9 +35,8 @@ public class UserService implements UserDetailsService {
                         user.getId(),
                         user.getName(),
                         user.getEmail(),
-                        user.getRoles().stream().map( role ->
-                        new RoleDto(role.getId(),
-                        role.getAuthority())).collect(Collectors.toSet()))).toList();
+                        user.getRoles().stream().map(Role::getAuthority).collect(Collectors.toSet()))
+        ).toList();
     }
 
     public  UserDto findById(Long id) {
@@ -46,7 +45,7 @@ public class UserService implements UserDetailsService {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                user.getRoles().stream().map( role -> new RoleDto(role.getId(), role.getAuthority())).collect(Collectors.toSet()));
+                user.getRoles().stream().map(Role::getAuthority).collect(Collectors.toSet()));
     }
 
     @Transactional
@@ -63,7 +62,7 @@ public class UserService implements UserDetailsService {
                 build();
         Set<Role> roles = new HashSet<>();
         for(RoleDto roleDto : userInsertOrUpdateDto.roleDtoSet()){
-            roles.add(roleRepository.findById(roleDto.id()).orElseThrow(() -> new ResourceNotFoundException("Role id "+roleDto.id()+" not found.")));
+            roles.add(roleRepository.findByAuthority(roleDto.authority()).orElseThrow(() -> new ResourceNotFoundException("Role of authority "+roleDto.authority()+" not found.")));
         }
         user.setRoles(roles);
         user = userRepository.save(user);
@@ -94,7 +93,7 @@ public class UserService implements UserDetailsService {
 
         Set<Role> roles = new HashSet<>();
         for(RoleDto roleDto : userInsertOrUpdateDto.roleDtoSet()){
-            roles.add(roleRepository.findById(roleDto.id()).orElseThrow(() -> new ResourceNotFoundException("Role id "+roleDto.id()+" not found.")));
+            roles.add(roleRepository.findByAuthority(roleDto.authority()).orElseThrow(() -> new ResourceNotFoundException("Role of authority "+roleDto.authority()+" not found.")));
         }
         user.setRoles(roles);
         user = userRepository.save(user);

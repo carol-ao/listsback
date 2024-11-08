@@ -32,6 +32,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST,"/login", "/register").permitAll() // Permite acesso às rotas públicas
                         .requestMatchers(HttpMethod.GET, "/users").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/users/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users").hasRole("ADMIN") // Permite POST em /users somente para ADMIN
                         .anyRequest().authenticated() // Exige autenticação para outras rotas
                 )

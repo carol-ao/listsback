@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
@@ -19,5 +20,7 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
               tb_user.email = :email
            """)
     List<UserDetailsProjection> searchUserAndRolesByEmail(String email);
+
+    Optional<Role> findByAuthority(String authority);
 
 }

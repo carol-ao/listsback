@@ -13,13 +13,16 @@ public class JwtUtil {
     @Value("${security.secret-key}")
     private String secretKey;
 
+    @Value("${security.jwt-duration}")
+    private String tokenDuration;
+
     public String generateToken(String username) {
         SecretKey key = new SecretKeySpec(secretKey.getBytes(), "HMACSHA256");
 
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // Expiração em 10 horas
+                .expiration(new Date(System.currentTimeMillis() + Long.parseLong(tokenDuration)))
                 .signWith(key)
                 .compact();
     }
