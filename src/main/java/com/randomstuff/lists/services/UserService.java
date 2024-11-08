@@ -7,11 +7,15 @@ import com.randomstuff.lists.entities.Role;
 import com.randomstuff.lists.entities.User;
 import com.randomstuff.lists.exceptions.EmailAlreadyRegisteredException;
 import com.randomstuff.lists.exceptions.ResourceNotFoundException;
+import com.randomstuff.lists.projections.UserDetailsProjection;
 import com.randomstuff.lists.repositories.RoleRepository;
 import com.randomstuff.lists.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,11 +23,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public List<UserDto> findAll(){
         return userRepository.findAll().stream().map( user ->
@@ -104,7 +108,24 @@ public class UserService {
 
     @Transactional
     public void delete(Long id) {
-        User user = userRepository.findById(id).orElseThrow( () -> new ResourceNotFoundException("User of id "+" was not found."));
+        User user = userRepository.findById(id).orElseThrow( () -> new ResourceNotFoundException("User of id "+id+" was not found."));
         userRepository.delete(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        List<UserDetailsProjection> result = roleRepository.searchUserAndRolesByEmail(username);
+        if(result.isEmpty()){
+            throw new UsernameNotFoundException("Usuário não encontrado");
+        }
+
+        User user = new User();
+        user.setPassword(result.getFirst().getPassword());
+        user.setEmail(username);
+        for(UserDetailsProjection projection : result){
+            user.getRoles().add(new Role(projection.getRoleId(), projection.getAuthority()));
+        }
+
+        return user;
     }
 }
